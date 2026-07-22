@@ -1,0 +1,7 @@
+opencode.json
+.env*
+!.env.example
+node_modules/
+.next/
+dist/
+
