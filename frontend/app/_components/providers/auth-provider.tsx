@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import { apiGet, apiPost } from '@/app/_lib/api';
 
 interface User {
@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  async function setAuth(newToken: string) {
+  const setAuth = useCallback(async (newToken: string) => {
     setToken(newToken);
     setLoading(true);
     sessionStorage.setItem('access_token', newToken);
@@ -54,18 +54,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
-  function login() {
+  const login = useCallback(() => {
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
-  }
+  }, []);
 
-  async function logout() {
+  const logout = useCallback(async () => {
     await apiPost('/auth/logout');
     setToken(null);
     setUser(null);
     sessionStorage.removeItem('access_token');
-  }
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, token, loading, login, logout, setAuth }}>
