@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
-import { apiGet, apiPost } from '@/app/_lib/api';
+import { apiGet, apiPost, setApiToken, setOnRefreshFailed } from '@/app/_lib/api';
 
 interface User {
   id: string;
@@ -22,34 +22,49 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+function getInitialToken(): string | null {
+  if (typeof window !== 'undefined') {
+    return sessionStorage.getItem('access_token');
+  }
+  return null;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(getInitialToken);
+  const [loading, setLoading] = useState(() => !!getInitialToken());
 
   useEffect(() => {
-    const saved = sessionStorage.getItem('access_token');
-    if (saved) {
-      setToken(saved);
-      apiGet('/auth/me', saved)
-        .then(setUser)
-        .catch(() => { setToken(null); sessionStorage.removeItem('access_token'); })
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
+    setOnRefreshFailed(() => {
+      setToken(null);
+      setUser(null);
+    });
   }, []);
 
+  useEffect(() => {
+    if (!token) return;
+    setApiToken(token);
+    apiGet('/auth/me')
+      .then(setUser)
+      .catch(() => {
+        setToken(null);
+        setUser(null);
+      })
+      .finally(() => setLoading(false));
+  }, [token]);
+
   const setAuth = useCallback(async (newToken: string) => {
+    setApiToken(newToken);
     setToken(newToken);
     setLoading(true);
     sessionStorage.setItem('access_token', newToken);
     try {
-      const u = await apiGet('/auth/me', newToken);
+      const u = await apiGet('/auth/me');
       setUser(u);
       return u as User;
     } catch {
       setToken(null);
+      setUser(null);
       sessionStorage.removeItem('access_token');
     } finally {
       setLoading(false);
@@ -62,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await apiPost('/auth/logout');
+    setApiToken(null);
     setToken(null);
     setUser(null);
     sessionStorage.removeItem('access_token');

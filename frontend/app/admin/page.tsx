@@ -13,8 +13,8 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     if (!token) return;
     Promise.all([
-      apiGet('/admin/api-providers', token),
-      apiGet('/admin/api-keys', token),
+      apiGet('/admin/api-providers'),
+      apiGet('/admin/api-keys'),
     ]).then(([providers, keys]) => {
       setStats({
         providers: Array.isArray(providers) ? providers.length : 0,

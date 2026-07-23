@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ApiProvider } from './entities/api-provider.entity';
@@ -26,7 +30,10 @@ export class ApiKeysService {
     const exists = await this.providerRepo.findOneBy({ name: dto.name });
     if (exists) throw new ConflictException('Provider name already exists');
 
-    const provider = this.providerRepo.create({ name: dto.name, endpoint: dto.endpoint ?? '' });
+    const provider = this.providerRepo.create({
+      name: dto.name,
+      endpoint: dto.endpoint ?? '',
+    });
     return this.providerRepo.save(provider);
   }
 
@@ -34,7 +41,10 @@ export class ApiKeysService {
     return this.providerRepo.find({ order: { name: 'ASC' } });
   }
 
-  async updateProvider(id: string, dto: UpdateApiProviderDto): Promise<ApiProvider> {
+  async updateProvider(
+    id: string,
+    dto: UpdateApiProviderDto,
+  ): Promise<ApiProvider> {
     const provider = await this.providerRepo.findOneBy({ id });
     if (!provider) throw new NotFoundException('Provider not found');
 
@@ -81,7 +91,9 @@ export class ApiKeysService {
     if (result.affected === 0) throw new NotFoundException('API key not found');
   }
 
-  async selectKey(providerName: string): Promise<{ id: string; key: string } | null> {
+  async selectKey(
+    providerName: string,
+  ): Promise<{ id: string; key: string } | null> {
     const keys = await this.keyRepo.find({
       where: {
         status: 'active',
@@ -96,7 +108,11 @@ export class ApiKeysService {
     return { id: chosen.id, key: chosen.keyValue };
   }
 
-  async markError(id: string, status: string, errorMessage: string): Promise<void> {
+  async markError(
+    id: string,
+    status: string,
+    errorMessage: string,
+  ): Promise<void> {
     await this.keyRepo.update(id, {
       status,
       errorMessage,

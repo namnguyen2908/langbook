@@ -59,7 +59,7 @@ export function ProvidersContent() {
 
   useEffect(() => {
     if (!token) return;
-    apiGet('/admin/api-providers', token)
+    apiGet('/admin/api-providers')
       .then((data) => { setProviders(data); })
       .catch(() => {})
       .finally(() => setLoading(false));
@@ -67,7 +67,7 @@ export function ProvidersContent() {
 
   useEffect(() => {
     if (!token || !selectedProviderId) { setKeys([]); return; }
-    apiGet(`/admin/api-keys?provider_id=${selectedProviderId}`, token)
+    apiGet(`/admin/api-keys?provider_id=${selectedProviderId}`)
       .then(setKeys)
       .catch(() => {});
   }, [token, selectedProviderId]);
@@ -87,7 +87,7 @@ export function ProvidersContent() {
 
   async function loadKeys() {
     if (!token || !selectedProviderId) return;
-    const data = await apiGet(`/admin/api-keys?provider_id=${selectedProviderId}`, token);
+    const data = await apiGet(`/admin/api-keys?provider_id=${selectedProviderId}`);
     setKeys(data);
   }
 
@@ -100,7 +100,7 @@ export function ProvidersContent() {
         name: editName.trim(),
         endpoint: editEndpoint.trim(),
         isActive: editIsActive,
-      }, token);
+      });
       setProviders((prev) => prev.map((p) => p.id === selectedProviderId ? updated : p));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Lỗi');
@@ -114,8 +114,8 @@ export function ProvidersContent() {
     setSaving(true);
     setError('');
     try {
-      await apiPost('/admin/api-providers', { name: newProviderName.trim(), endpoint: newProviderEndpoint.trim() }, token);
-      const data = await apiGet('/admin/api-providers', token);
+      await apiPost('/admin/api-providers', { name: newProviderName.trim(), endpoint: newProviderEndpoint.trim() });
+      const data = await apiGet('/admin/api-providers');
       setProviders(data);
       setShowAddProvider(false);
       setNewProviderName('');
@@ -132,7 +132,7 @@ export function ProvidersContent() {
     setSaving(true);
     setError('');
     try {
-      await apiPost('/admin/api-keys', { providerId: selectedProviderId, key: newKey.trim() }, token);
+      await apiPost('/admin/api-keys', { providerId: selectedProviderId, key: newKey.trim() });
       await loadKeys();
       setShowAddKey(false);
       setNewKey('');
@@ -147,7 +147,7 @@ export function ProvidersContent() {
     if (!token) return;
     setUpdating(key.id);
     try {
-      await apiPatch(`/admin/api-keys/${key.id}`, { status: key.status === 'disabled' ? 'active' : 'disabled' }, token);
+      await apiPatch(`/admin/api-keys/${key.id}`, { status: key.status === 'disabled' ? 'active' : 'disabled' });
       await loadKeys();
     } catch {} finally { setUpdating(null); }
   }
@@ -155,7 +155,7 @@ export function ProvidersContent() {
   async function handleDeleteKey(id: string) {
     if (!token) return;
     try {
-      await apiDelete(`/admin/api-keys/${id}`, token);
+      await apiDelete(`/admin/api-keys/${id}`);
       setDeleteId(null);
       await loadKeys();
     } catch {}

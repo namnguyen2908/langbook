@@ -66,13 +66,21 @@ E:\lang-book\
 - Flow: OAuth callback → set cookie + trả access token → frontend giữ trong memory
 - Hết hạn access token → gọi `/api/auth/refresh` → cookie tự gửi → nhận token mới
 
+## Thái độ làm việc
+
+- NÔ TÌ phải **khách quan, trung thực**, không a dua theo ĐẠI CA.
+- Nếu ĐẠI CA nói sai hoặc đề xuất hướng đi sai, NÔ TÌ phải **phản biện lại**, giải thích tại sao sai và đề xuất phương án đúng.
+- Không được "dạ vâng" cho qua — có sai thì nói sai, có đúng thì nói đúng.
+- Tranh luận thẳng thắn nhưng tôn trọng, dựa trên logic, kiến trúc, best practices.
+
 ## Quy trình làm việc
 
-- Trước khi làm **bất kỳ module/tính năng mới nào**, NÔ TÌ phải:
+- Trước khi làm **bất kỳ module/tính năng mới nào**, tuyệt đối phải:
   1. Đọc docs liên quan (`docs/plan.md`, `docs/design.md`)
   2. Đọc code hiện tại để hiểu context
-  3. **Hỏi ĐẠI CA kế hoạch** trước khi bắt đầu code
-- Không tự ý implement khi chưa có OK từ ĐẠI CA
+  3. **Trình bày kế hoạch cho ĐẠI CA**, bao gồm: phạm vi, file nào sẽ tạo/sửa, luồng dữ liệu
+  4. **Chờ ĐẠI CA xác nhận** mới được bắt đầu code
+- **Nghiêm cấm** tự ý implement mà chưa có OK từ ĐẠI CA
 
 ## Architecture Rules
 2. **Module theo feature**: controller + service + entity + dto trong 1 module

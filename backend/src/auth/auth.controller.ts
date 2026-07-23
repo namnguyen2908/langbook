@@ -33,9 +33,10 @@ export class AuthController {
     const { accessToken, refreshToken } = await this.authService.login(
       req.user as User,
     );
+    const isSecure = this.configService.get('NODE_ENV') === 'production';
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: isSecure,
       sameSite: 'strict',
       path: '/api/v1/auth',
     });
@@ -54,9 +55,10 @@ export class AuthController {
     const { accessToken, refreshToken } = await this.authService.login(
       req.user as User,
     );
+    const isSecure = this.configService.get('NODE_ENV') === 'production';
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
-      secure: true,
+      secure: isSecure,
       sameSite: 'strict',
       path: '/api/v1/auth',
     });
@@ -67,9 +69,18 @@ export class AuthController {
 
   @Post('refresh')
   @HttpCode(200)
-  refresh(@Req() req: Request) {
+  async refresh(@Req() req: Request, @Res() res: Response) {
     const token = req.cookies?.refresh_token;
-    return this.authService.refreshToken(token);
+    const { accessToken, refreshToken } =
+      await this.authService.refreshToken(token);
+    const isSecure = this.configService.get('NODE_ENV') === 'production';
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: isSecure,
+      sameSite: 'strict',
+      path: '/api/v1/auth',
+    });
+    return res.json({ accessToken });
   }
 
   @Post('logout')

@@ -65,11 +65,13 @@ export class AuthService {
       });
       const user = await this.usersService.findById(payload.sub);
       if (!user) throw new UnauthorizedException();
+      const payloadData = { sub: user.id, email: user.email, role: user.role };
       return {
-        accessToken: this.jwtService.sign(
-          { sub: user.id, email: user.email, role: user.role },
-          { expiresIn: '15m' },
-        ),
+        accessToken: this.jwtService.sign(payloadData, { expiresIn: '15m' }),
+        refreshToken: this.jwtService.sign(payloadData, {
+          secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+          expiresIn: '7d',
+        }),
       };
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
