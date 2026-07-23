@@ -21,13 +21,19 @@ export class AuthService {
     let user = await this.usersService.findByProvider(data.provider, data.providerId);
     if (user) return user;
 
+    const adminEmail = this.configService.get<string>('ADMIN_EMAIL');
+    const role = data.email === adminEmail ? 'admin' : 'user';
+
     const existing = await this.usersService.findByEmail(data.email);
     if (existing) {
       await this.usersService.updateProvider(existing.id, data.provider, data.providerId);
+      if (existing.role !== role) {
+        await this.usersService.updateRole(existing.id, role);
+      }
       return this.usersService.findById(existing.id) as Promise<User>;
     }
 
-    return this.usersService.createOAuthUser(data);
+    return this.usersService.createOAuthUser({ ...data, role });
   }
 
   async login(user: User) {

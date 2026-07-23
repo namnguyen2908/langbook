@@ -30,14 +30,14 @@ export class UsersService {
     name: string;
     provider: 'google' | 'facebook';
     providerId: string;
+    role?: string;
   }): Promise<User> {
     const user = this.usersRepository.create({
       email: data.email,
       name: data.name,
       provider: data.provider,
       providerId: data.providerId,
-      targetLang: 'en',
-      currentLevel: 'a0',
+      role: data.role || 'user',
     });
     return this.usersRepository.save(user);
   }
@@ -48,5 +48,9 @@ export class UsersService {
     providerId: string,
   ): Promise<void> {
     await this.usersRepository.update(id, { provider, providerId });
+  }
+
+  async updateRole(id: string, role: string): Promise<void> {
+    await this.usersRepository.update(id, { role });
   }
 }
