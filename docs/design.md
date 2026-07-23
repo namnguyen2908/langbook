@@ -90,21 +90,7 @@ Nguyên tắc **60–30–10**:
 | **Mesh nền public** | `brand-50 + accent-50 + brand-100/40` blur | Background public page |
 | **Accent strip** | `from-brand-400 via-brand-500 to-accent-500` | Dải dọc decorative |
 
-> ⚠️ **Dark mode không triển khai.** Toàn bộ thiết kế chỉ hỗ trợ light mode. Bảng dưới đây giữ lại để tham khảo kiến trúc, không áp dụng.
-
-### 2.6 Dark Mode Mapping (**Deprecated — không dùng**)
-
-| Token | Light | Dark |
-|---|---|---|
-| `--neutral-50` | `#F8FAFC` | `#0F172A` (slate-900) |
-| `--neutral-100` | `#F1F5F9` | `#1E293B` (slate-800) |
-| `--neutral-200` | `#E2E8F0` | `#334155` (slate-700) |
-| `--neutral-300` | `#CBD5E1` | `#475569` (slate-600) |
-| `--neutral-500` | `#64748B` | `#94A3B8` (slate-400) |
-| `--neutral-700` | `#334155` | `#CBD5E1` (slate-300) |
-| `--neutral-900` | `#0F172A` | `#F8FAFC` (slate-50) |
-| `--neutral-white` | `#FFFFFF` | `#1E293B` (slate-800) |
-| Brand | Giữ nguyên | Giữ nguyên (sáng hơn 1 bậc nếu cần contrast) |
+> Chỉ hỗ trợ light mode. Không triển khai dark mode.
 
 ---
 
@@ -348,11 +334,7 @@ Dùng để highlight tính năng ở public page:
 
 ---
 
-## 8. Dark Mode (**Không triển khai**)
 
-Dark mode nằm ngoài scope. Chỉ hỗ trợ light mode. Nội dung mục này giữ lại để tham khảo sau này.
-
----
 
 ## 9. Public Page Layout (Editorial)
 
