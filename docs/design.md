@@ -9,9 +9,16 @@
 - **Tối giản, tập trung:** Content là trung tâm. UI không cạnh tranh với bài học.
 - **Cá nhân, ấm áp:** Màu sắc và spacing tạo cảm giác thoải mái, khuyến khích học tập lâu dài.
 - **Nhất quán:** Mọi component tuân thủ 1 hệ thống token. Không ngoại lệ.
-- **Dễ tiếp cận:** WCAG AA cho mọi component, dark mode có sẵn.
+- **Dễ tiếp cận:** WCAG AA cho mọi component.
 
-**Design read:** Web app học tập (product UI) — không phải landing page. Dashboard-feel với sidebar, tập trung vào content.
+### 1.1 Hai chế độ layout
+
+| Chế độ | Áp dụng | Layout | Background |
+|---|---|---|---|
+| **Dashboard** | Trang có sidebar (learn, quiz, flashcard, vocabulary) | Sidebar + TopBar + content | `neutral-50` |
+| **Public/Editorial** | Trang không sidebar (login, placement, landing) | Full-page hero, editorial grid | Mesh gradient + pattern |
+
+**Nguyên tắc:** Trang public là "brand moment" — dùng nhiều màu sắc, hiệu ứng, decorative art. Trang dashboard tập trung vào content, giữ tối giản.
 
 ---
 
@@ -27,8 +34,6 @@ Nguyên tắc **60–30–10**:
 
 ### 2.1 Neutral (60%) — Slate
 
-Sử dụng cho nền, text, border, và mọi thành phần trung tính.
-
 | Token | Hex | Tailwind | Usage |
 |---|---|---|---|
 | `--neutral-50` | `#F8FAFC` | `slate-50` | Nền page / section |
@@ -42,24 +47,26 @@ Sử dụng cho nền, text, border, và mọi thành phần trung tính.
 
 ### 2.2 Brand (30%) — Violet
 
-Sử dụng cho primary actions, links, active indicators.
-
 | Token | Hex | Tailwind | Usage |
 |---|---|---|---|
-| `--brand-50` | `#F5F3FF` | `violet-50` | Nền trạng thái hover nhẹ |
-| `--brand-100` | `#EDE9FE` | `violet-100` | Badge nhẹ, trạng thái selected |
-| `--brand-200` | `#DDD6FE` | `violet-200` | Border focus, selected |
+| `--brand-50` | `#F5F3FF` | `violet-50` | Nền hover nhẹ, ambient glow |
+| `--brand-100` | `#EDE9FE` | `violet-100` | Badge nhẹ, selected state, pill bg |
+| `--brand-200` | `#DDD6FE` | `violet-200` | Border focus, decorative shapes |
+| `--brand-300` | `#C4B5FD` | `violet-300` | Floating circles, decorative dots |
+| `--brand-400` | `#A78BFA` | `violet-400` | Gradient accent strip |
 | `--brand-500` | `#8B5CF6` | `violet-500` | **Primary** — button, link, icon |
 | `--brand-600` | `#7C3AED` | `violet-600` | **Hover** — primary button hover |
 | `--brand-700` | `#6D28D9` | `violet-700` | **Active/Pressed** |
-| `--brand-800` | `#5B21B6` | `violet-800` | Text on dark bg |
+| `--brand-800` | `#5B21B6` | `violet-800` | Text trên dark bg |
 
 ### 2.3 Accent (10%) — Cyan
 
-Sử dụng cho CTA nổi bật, gamification (achievement, streak, XP).
-
 | Token | Hex | Tailwind | Usage |
 |---|---|---|---|
+| `--accent-50` | `#ECFEFF` | `cyan-50` | Ambient glow, hover bg nhẹ |
+| `--accent-100` | `#CFFAFE` | `cyan-100` | Badge, pill bg |
+| `--accent-200` | `#A5F3FC` | `cyan-200` | Decorative shapes, ring hover |
+| `--accent-300` | `#67E8F9` | `cyan-300` | Floating circles |
 | `--accent-500` | `#06B6D4` | `cyan-500` | **Accent** — CTA, badge XP, achievement |
 | `--accent-600` | `#0891B2` | `cyan-600` | Hover accent |
 | `--accent-700` | `#0E7490` | `cyan-700` | Active accent |
@@ -73,7 +80,19 @@ Sử dụng cho CTA nổi bật, gamification (achievement, streak, XP).
 | **Error** | `#EF4444` | `red-500` | Lỗi, sai, blocked |
 | **Info** | `#3B82F6` | `blue-500` | Thông tin, hướng dẫn |
 
-### 2.5 Dark Mode Mapping
+### 2.5 Gradient combinations
+
+| Mục đích | Gradient | Dùng ở |
+|---|---|---|
+| **Brand bar** | `from-brand-500 via-accent-500 to-brand-500` | Gradient bar trên card login |
+| **Text accent** | `from-brand-500 to-accent-500` | Text gradient cho "với AI" |
+| **Logo bg** | `from-brand-500 to-brand-600` | Icon LangBook logo |
+| **Mesh nền public** | `brand-50 + accent-50 + brand-100/40` blur | Background public page |
+| **Accent strip** | `from-brand-400 via-brand-500 to-accent-500` | Dải dọc decorative |
+
+> ⚠️ **Dark mode không triển khai.** Toàn bộ thiết kế chỉ hỗ trợ light mode. Bảng dưới đây giữ lại để tham khảo kiến trúc, không áp dụng.
+
+### 2.6 Dark Mode Mapping (**Deprecated — không dùng**)
 
 | Token | Light | Dark |
 |---|---|---|
@@ -106,23 +125,32 @@ Geist được load qua `next/font/google`. Noto Sans SC/JP load khi cần (dyna
 
 | Level | Size | Line Height | Weight | Usage |
 |---|---|---|---|---|
-| **h1** | `text-3xl md:text-4xl` | `leading-tight` | `font-bold` | Page title |
+| **hero** | `text-[clamp(28px,5vw,52px)]` | `leading-[1.1]` | `font-bold` | Public page headline |
+| **h1** | `text-3xl md:text-4xl` | `leading-tight` | `font-bold` | Page title (dashboard) |
 | **h2** | `text-2xl md:text-3xl` | `leading-tight` | `font-semibold` | Section title |
 | **h3** | `text-xl md:text-2xl` | `leading-snug` | `font-semibold` | Card title |
-| **h4** | `text-lg md:text-xl` | `leading-snug` | `font-medium` | Subsection |
 | **body** | `text-base` | `leading-relaxed` | `font-normal` | Paragraph |
-| **body-sm** | `text-sm` | `leading-normal` | `font-normal` | Secondary text |
+| **body-lg** | `text-base sm:text-lg` | `leading-relaxed` | `font-normal` | Public page body |
 | **caption** | `text-xs` | `leading-normal` | `font-normal` | Label, badge, meta |
-| **overline** | `text-xs` | `leading-normal` | `font-medium` | Uppercase label |
-| **mono** | `text-sm` | `leading-normal` | `font-mono` | Code, keyboard |
 
 **Max width body:** `max-w-prose` (65ch) cho readability.
+**Responsive headline:** Dùng `text-[clamp(min,preferred,max)]` thay vì nhiều breakpoint.
+
+### 3.3 Gradient Text
+
+Dùng cho từ khoá quan trọng trong headline:
+
+```tsx
+<span className="bg-gradient-to-r from-brand-500 to-accent-500 bg-clip-text text-transparent">
+  với AI
+</span>
+```
+
+Utility: `text-gradient-brand` (defined trong globals.css)
 
 ---
 
 ## 4. Spacing
-
-Sử dụng Tailwind spacing scale (rem-based):
 
 | Token | rem | px | Usage |
 |---|---|---|---|
@@ -132,6 +160,7 @@ Sử dụng Tailwind spacing scale (rem-based):
 | `space-4` | 1rem | 16px | Padding card, gap section items |
 | `space-6` | 1.5rem | 24px | Padding page, gap cards |
 | `space-8` | 2rem | 32px | Gap section lớn |
+| `space-10` | 2.5rem | 40px | Space giữa logo và headline |
 | `space-12` | 3rem | 48px | Section padding |
 | `space-16` | 4rem | 64px | Page section lớn |
 
@@ -145,18 +174,19 @@ Sử dụng Tailwind spacing scale (rem-based):
 | `radius-md` | `10px` | Button, badge, alert |
 | `radius-lg` | `14px` | Card, modal, dropdown menu |
 | `radius-xl` | `18px` | Sidebar, large panel |
+| `radius-2xl` | `16px` | OAuth button, feature pill |
 | `radius-full` | `9999px` | Avatar, pill, dot |
 
 ---
 
 ## 6. Shadows (Elevation)
 
-| Level | Light | Dark |
-|---|---|---|
-| **sm** | `0 1px 2px 0 rgb(0 0 0 / 0.05)` | `0 1px 2px 0 rgb(0 0 0 / 0.3)` |
-| **md** | `0 4px 6px -1px rgb(0 0 0 / 0.07)` | `0 4px 6px -1px rgb(0 0 0 / 0.35)` |
-| **lg** | `0 10px 15px -3px rgb(0 0 0 / 0.08)` | `0 10px 15px -3px rgb(0 0 0 / 0.4)` |
-| **xl** | `0 20px 25px -5px rgb(0 0 0 / 0.1)` | `0 20px 25px -5px rgb(0 0 0 / 0.45)` |
+| Level | Value |
+|---|---|
+| **sm** | `0 1px 2px 0 rgb(0 0 0 / 0.05)` |
+| **md** | `0 4px 6px -1px rgb(0 0 0 / 0.07)` |
+| **lg** | `0 10px 15px -3px rgb(0 0 0 / 0.08)` |
+| **xl** | `0 20px 25px -5px rgb(0 0 0 / 0.1)` |
 
 **Important:** Không dùng pure black shadow. Luôn tint theo màu nền. Light mode dùng `shadow-color: slate-900/10`.
 
@@ -174,12 +204,29 @@ Sử dụng Tailwind spacing scale (rem-based):
 | **Accent** | `accent-500` | `white` | — | `accent-600` | `accent-700` |
 | **Danger** | `error` | `white` | — | `#DC2626` | `#B91C1C` |
 | **Disabled** | `neutral-100` | `neutral-300` | — | — | — |
+| **OAuth** | `white` | `neutral-800` | `ring-1 neutral-200` | `brand-50` + `brand-200` ring | `scale-[0.98]` |
 
-- **Padding:** `px-5 py-2.5` (md), `px-4 py-2` (sm), `px-6 py-3` (lg)
-- **Radius:** `radius-md` (10px)
-- **Font:** `text-sm font-medium`
-- **Transition:** `transition-all duration-150 ease-in-out`
+- **Padding (OAuth):** `h-13` (52px)
+- **Radius:** `radius-2xl` (16px) cho OAuth, `radius-md` (10px) cho các variant khác
+- **Font:** `text-sm font-semibold` (OAuth), `text-sm font-medium` (khác)
+- **Transition:** `transition-all duration-200`
 - **Pressed:** `scale-[0.97]` tactile feedback
+- **OAuth hover:** `hover:shadow-lg hover:-translate-y-0.5`
+
+**OAuth button template:**
+```tsx
+<motion.a
+  whileHover={{ y: -2, scale: 1.01 }}
+  whileTap={{ scale: 0.98 }}
+  className="flex h-13 w-full items-center justify-center gap-3 rounded-xl bg-white text-sm font-semibold text-neutral-800 shadow-md ring-1 ring-neutral-200 transition-all duration-200 hover:shadow-lg"
+>
+  <AccurateSvgLogo />
+  Tiếp tục với Google
+</motion.a>
+```
+
+Google button hover: `hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 hover:ring-brand-200`
+Facebook button hover: `hover:border-accent-200 hover:bg-accent-50 hover:text-accent-700 hover:ring-accent-200`
 
 ### 7.2 Input
 
@@ -200,36 +247,60 @@ Sử dụng Tailwind spacing scale (rem-based):
 
 | Token | Value |
 |---|---|
-| BG | `neutral-white` (light) / `neutral-100` (dark) |
+| BG | `neutral-white` |
 | Radius | `radius-lg` (14px) |
 | Shadow | `shadow-sm` |
 | Padding | `p-6` |
-| Border | `border border-neutral-200` (light) / `neutral-700` (dark) |
+| Border | `border border-neutral-200` |
 
 **Card hover:** `shadow-md` + `border-neutral-300` (nếu interactive).
 
-### 7.4 Sidebar
+### 7.4 Feature Pill (Chip)
+
+Dùng để highlight tính năng ở public page:
+
+| Hue | BG | Text | Ring | Hover |
+|---|---|---|---|---|
+| **Brand** | `brand-100` | `brand-700` | `brand-200/60` | `brand-200` + `shadow-md` |
+| **Accent** | `accent-100` | `accent-700` | `accent-200/60` | `accent-200` + `shadow-md` |
+
+- **Padding:** `px-4 py-2` (md), `px-3.5 py-1.5` (sm)
+- **Radius:** `radius-full`
+- **Font:** `text-sm font-medium`
+- **Animation:** `hover:-translate-y-0.5` + `hover:shadow-md`
+
+```tsx
+<motion.span
+  whileHover={{ y: -2, scale: 1.02 }}
+  className="rounded-full bg-brand-100 px-4 py-2 text-sm font-medium text-brand-700 ring-1 ring-brand-200/60 hover:bg-brand-200 hover:shadow-md"
+>
+  <Icon className="h-4 w-4 text-brand-500" weight="fill" />
+  Nội dung AI cá nhân hoá
+</motion.span>
+```
+
+### 7.5 Sidebar
 
 | Token | Value |
 |---|---|
 | Width | `w-64` (256px), collapse mobile |
-| BG | `neutral-100` (light) / `neutral-900` (dark) |
+| BG | `neutral-100` |
 | Border-right | `border-r border-neutral-200` |
 | Item padding | `px-4 py-2.5` |
 | Item radius | `radius-md` |
-| Active item | `bg-brand-50 text-brand-700 font-medium` (light) |
-| Hover item | `bg-neutral-200` (light) / `bg-neutral-800` (dark) |
+| Active item | `bg-brand-50 text-brand-700 font-medium` |
+| Hover item | `bg-neutral-200` |
 
-### 7.5 Top Bar
+### 7.6 Top Bar
 
 | Token | Value |
 |---|---|
 | Height | `h-16` (64px) |
-| BG | `neutral-white` (light) / `neutral-100` (dark) |
+| BG | `neutral-white` |
 | Border-bottom | `border-b border-neutral-200` |
 | Padding | `px-6` |
 
-### 7.6 Badge
+### 7.7 Badge
 
 | Variant | BG | Text |
 |---|---|---|
@@ -244,7 +315,7 @@ Sử dụng Tailwind spacing scale (rem-based):
 - **Padding:** `px-2.5 py-0.5`
 - **Font:** `text-xs font-medium`
 
-### 7.7 Alert
+### 7.8 Alert
 
 | Variant | BG | Border | Text | Icon |
 |---|---|---|---|---|
@@ -257,16 +328,16 @@ Sử dụng Tailwind spacing scale (rem-based):
 - **Padding:** `p-4`
 - **Font:** `text-sm`
 
-### 7.8 Progress Bar
+### 7.9 Progress Bar
 
 | Token | Value |
 |---|---|
-| Track BG | `neutral-200` (light) / `neutral-700` (dark) |
+| Track BG | `neutral-200` |
 | Fill BG | `brand-500` (default), `accent-500` (gamification) |
 | Radius | `radius-full` |
 | Height | `h-2` (default), `h-3` (gamification) |
 
-### 7.9 Tabs
+### 7.10 Tabs
 
 | Token | Value |
 |---|---|
@@ -277,29 +348,126 @@ Sử dụng Tailwind spacing scale (rem-based):
 
 ---
 
-## 8. Dark Mode
+## 8. Dark Mode (**Không triển khai**)
 
-- **Strategy:** CSS class-based (`dark` class trên `<html>`)
-- **Toggle:** Góc phải TopBar — icon sun/moon
-- **Default:** Theo system preference (`prefers-color-scheme`), có thể override bằng toggle
-
-**Quy tắc Dark Mode:**
-- Nền tối: không dùng pure `#000000`, dùng `slate-900` hoặc `slate-800`
-- Text tối: không dùng pure `#FFFFFF`, dùng `slate-50` hoặc `slate-100`
-- Border tối: dùng `slate-700` thay `slate-200`
-- Brand color giữ nguyên, không desaturate
-- Shadow tint về dark (dùng `rgb(0 0 0 / 0.3-0.45)`)
-- Card nền: `slate-800`, elevated card: `slate-700`
+Dark mode nằm ngoài scope. Chỉ hỗ trợ light mode. Nội dung mục này giữ lại để tham khảo sau này.
 
 ---
 
-## 9. Layout (Sidebar + Top Bar)
+## 9. Public Page Layout (Editorial)
+
+Áp dụng cho các trang không có sidebar: login, placement wizard, landing page.
+
+### 9.1 Cấu trúc tổng thể
+
+```
+┌──────────────────────────────────────────────────────┐
+│ Background: mesh gradient + dot pattern              │
+│ ┌──────────────────────────────────────────────────┐ │
+│ │  Hero section (full viewport, centered)          │ │
+│ │  ──────────────────────────────────────────────  │ │
+│ │  Headline (hero size)                            │ │
+│ │  Decorative SVG art                              │ │
+│ │  Body text                                       │ │
+│ │  CTA / OAuth buttons                            │ │
+│ └──────────────────────────────────────────────────┘ │
+│                                                      │
+│ Background layers:                                    │
+│ - Mesh gradient (brand-50, accent-50, brand-100 blur)│
+│ - Dot pattern (brand-500/0.12 dots 28px)             │
+│ - Floating circles (brand-300, accent-300 animated)  │
+└──────────────────────────────────────────────────────┘
+```
+
+### 9.2 Background layers
+
+Mỗi public page có 3 lớp nền chồng lên nhau:
+
+**Layer 1 — Mesh gradient:**
+```tsx
+<div className="pointer-events-none fixed inset-0">
+  <div className="absolute -left-32 top-0 h-[600px] w-[600px] rounded-full bg-brand-50 blur-[120px]" />
+  <div className="absolute -bottom-32 -right-32 h-[500px] w-[500px] rounded-full bg-accent-50/60 blur-[100px]" />
+  <div className="absolute left-1/3 top-1/4 h-64 w-64 rounded-full bg-brand-100/40 blur-[90px]" />
+</div>
+```
+
+**Layer 2 — Dot pattern:**
+```tsx
+<div
+  className="pointer-events-none fixed inset-0 opacity-[0.35]"
+  style={{
+    backgroundImage: 'radial-gradient(rgba(139,92,246,0.12) 1px, transparent 1px)',
+    backgroundSize: '28px 28px',
+  }}
+/>
+```
+
+**Layer 3 — Floating decorative circles:**
+```tsx
+<div className="pointer-events-none absolute inset-0">
+  <div className="absolute left-[15%] top-[12%] h-4 w-4 animate-float rounded-full bg-brand-300/60" />
+  <div className="absolute right-[25%] top-[20%] h-3 w-3 animate-float-slow rounded-full bg-accent-300/50" />
+  <div className="absolute bottom-[25%] left-[20%] h-5 w-5 animate-float-slower rounded-full bg-brand-200/60" />
+  <div className="absolute bottom-[35%] right-[15%] h-2.5 w-2.5 animate-float rounded-full bg-accent-200/50" />
+  <div className="absolute left-[40%] top-[60%] h-6 w-6 animate-float-slow rounded-full bg-brand-100/70" />
+</div>
+```
+
+**Layer 4 — Vertical accent strip:**
+```tsx
+<div className="absolute bottom-0 left-0 top-0 w-1.5 bg-gradient-to-b from-brand-400 via-brand-500 to-accent-500" />
+```
+
+---
+
+## 10. Decorative SVG Art
+
+Sử dụng SVG inline với các vòng tròn overlap + radial gradient để tạo hiệu ứng nghệ thuật trừu tượng.
+
+### 10.1 Template
+
+```tsx
+<svg viewBox="0 0 480 200" className="w-full max-w-sm" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.12" />
+      <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0" />
+    </radialGradient>
+    <radialGradient id="ag" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stopColor="#06B6D4" stopOpacity="0.1" />
+      <stop offset="100%" stopColor="#06B6D4" stopOpacity="0" />
+    </radialGradient>
+  </defs>
+  {/* Circles với motion animation */}
+  <motion.circle cx="240" cy="100" r="110" fill="url(#bg)"
+    animate={{ scale: [1, 1.04, 1] }} transition={{ duration: 7, repeat: Infinity }} />
+  <motion.circle cx="300" cy="80" r="75" fill="url(#ag)"
+    animate={{ scale: [1, 1.06, 1] }} transition={{ duration: 9, repeat: Infinity }} />
+  {/* Small floating dots */}
+  <motion.circle cx="140" cy="70" r="20" fill="#06B6D4" fillOpacity="0.08"
+    animate={{ y: [0, 5, 0] }} transition={{ duration: 8, repeat: Infinity }} />
+</svg>
+```
+
+### 10.2 Animation mapping
+
+| Element | Animation | Duration | Easing |
+|---|---|---|---|
+| Main circle (brand) | scale pulse 1→1.04→1 | 7s | easeInOut |
+| Secondary circle (accent) | scale pulse 1→1.06→1 | 9s | easeInOut |
+| Small dots | y float 0→±8→0 | 6-8s | easeInOut |
+| Tiny specks | opacity 0.5→1→0.5 | 3-4s | easeInOut |
+
+---
+
+## 11. Layout (Sidebar + Top Bar)
 
 ```
 ┌──────────────────────────────────────────┐
 │ Top Bar (h-16)                           │
 │ ┌──────┐ ┌─────────────────────────────┐ │
-│ │Logo  │ │ Search  Profile  DarkToggle │ │
+│ │Logo  │ │ Search  Profile             │ │
 │ └──────┘ └─────────────────────────────┘ │
 ├────────┬─────────────────────────────────┤
 │        │                                 │
@@ -318,12 +486,12 @@ Sử dụng Tailwind spacing scale (rem-based):
 
 - **Mobile (< 768px):** Sidebar ẩn, hiện qua hamburger menu (overlay drawer)
 - **Content max-width:** `max-w-7xl` (1280px), centered khi màn hình lớn
-- **Background:** `neutral-50` (light) / `slate-900` (dark) toàn page
+- **Background:** `neutral-50` toàn page
 - **Gap giữa sidebar + content:** `border-r` ngăn cách
 
 ---
 
-## 10. Accessibility (WCAG AA)
+## 12. Accessibility (WCAG AA)
 
 | Yêu cầu | Tiêu chuẩn |
 |---|---|
@@ -333,12 +501,11 @@ Sử dụng Tailwind spacing scale (rem-based):
 | **Label** | Mọi input phải có label (không placeholder-as-label) |
 | **Error** | Error text + icon + `aria-invalid` + `aria-describedby` |
 | **Reduced motion** | Tôn trọng `prefers-reduced-motion` — tắt animation |
-| **Dark mode** | Tôn trọng `prefers-color-scheme`, có toggle |
 | **Keyboard nav** | Tab order hợp lý, skip-to-content link |
 
 ---
 
-## 11. Grid & Breakpoints
+## 13. Grid & Breakpoints
 
 | Breakpoint | Min width | Columns | Gutter |
 |---|---|---|---|
@@ -350,73 +517,114 @@ Sử dụng Tailwind spacing scale (rem-based):
 
 ---
 
-## 12. Iconography
+## 14. Iconography
 
-- **Library:** `@phosphor-icons/react` (hoặc `@radix-ui/react-icons` cho components nhỏ)
+### 14.1 UI icons
+
+- **Library:** `@phosphor-icons/react`
 - **Kích thước:** `w-5 h-5` (20px) cho UI icons, `w-6 h-6` (24px) cho navigation
-- **Stroke weight:** Đồng bộ 1.5px (bold) hoặc 2px (fill) — dùng 1 family duy nhất
+- **Stroke weight:** Đồng bộ `weight="bold"` (1.5px)
+
+### 14.2 Brand logos (Google, Facebook)
+
+Không dùng Phosphor `GoogleLogo` / `FacebookLogo` (bản đơn giản hoá). Dùng inline SVG chính xác từ Simple Icons:
+
+```tsx
+function GoogleSvg() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92..." fill="#4285F4" />
+      <path d="..." fill="#34A853" />
+      <path d="..." fill="#FBBC05" />
+      <path d="..." fill="#EA4335" />
+    </svg>
+  );
+}
+```
+
+| Logo | Màu sắc | Nguồn |
+|---|---|---|
+| Google | `#4285F4` `#34A853` `#FBBC05` `#EA4335` | Simple Icons |
+| Facebook | `#1877F2` | Simple Icons |
 
 ---
 
-## 13. Animation & Motion
+## 15. Animation & Motion
+
+### 15.1 Timing
 
 | Loại | Duration | Easing | Ghi chú |
 |---|---|---|---|
-| Hover | 150ms | `ease-in-out` | Button, link, card |
-| Enter | 200-300ms | `ease-out` | Modal, dropdown, sidebar drawer |
+| Hover | 150-200ms | `ease-in-out` | Button, link, card |
+| Enter (component) | 400-600ms | `[0.16, 1, 0.3, 1]` (cubic-bezier) | Staggered entrance |
 | Page transition | 200ms | `ease-in-out` | Next.js built-in |
-| Progress fill | 300ms | `ease-out` | Progress bar |
+| Decorative float | 6-12s | `ease-in-out infinite` | Floating circles |
+| Decorative pulse | 3-9s | `ease-in-out infinite` | SVG circle scale |
 | Reduced motion | 0ms | — | Tất cả animation tắt |
+
+### 15.2 Easing
+
+Easing mặc định cho entrance animation:
+```tsx
+ease: [0.16, 1, 0.3, 1]  // cubic-bezier — tự nhiên, không quá nhanh
+```
+
+### 15.3 Staggered entrance pattern
+
+```tsx
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } },
+};
+```
+
+**Thứ tự delay cho public page hero:**
+1. Brand logo: `delay: 0.1`
+2. Headline: `delay: 0.15`
+3. SVG art: `delay: 0.25`
+4. Body text: `delay: 0.3`
+5. CTA buttons: `delay: 0.4`
+
+### 15.4 CSS animations
+
+Defined trong `globals.css`:
+
+```css
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-12px) rotate(1deg); }
+  66% { transform: translateY(6px) rotate(-0.5deg); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+```
+
+| Class | Duration | Dùng cho |
+|---|---|---|
+| `animate-float` | 6s | Floating circles nhỏ |
+| `animate-float-slow` | 9s | Floating circles vừa |
+| `animate-float-slower` | 12s | Floating circles lớn |
+| `animate-glow-pulse` | 3s | Logo glow |
 
 ---
 
-## 14. shadcn/ui Integration
+## 16. shadcn/ui Integration
 
 Khi dùng shadcn/ui, custom theme qua `globals.css`:
 
 ```css
 @theme {
-  /* Neutral */
-  --color-neutral-50: #F8FAFC;
-  --color-neutral-100: #F1F5F9;
-  --color-neutral-200: #E2E8F0;
-  --color-neutral-300: #CBD5E1;
-  --color-neutral-500: #64748B;
-  --color-neutral-700: #334155;
-  --color-neutral-900: #0F172A;
-
-  /* Brand */
-  --color-brand-50: #F5F3FF;
-  --color-brand-100: #EDE9FE;
-  --color-brand-200: #DDD6FE;
-  --color-brand-500: #8B5CF6;
-  --color-brand-600: #7C3AED;
-  --color-brand-700: #6D28D9;
-  --color-brand-800: #5B21B6;
-
-  /* Accent */
-  --color-accent-500: #06B6D4;
-  --color-accent-600: #0891B2;
-  --color-accent-700: #0E7490;
-
-  /* Status */
-  --color-success: #22C55E;
-  --color-warning: #F59E0B;
-  --color-error: #EF4444;
-  --color-info: #3B82F6;
-
-  /* Radius */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 18px;
-}
-
-/* Dark mode: override CSS variables */
-.dark {
-  --neutral-50: #0F172A;
-  --neutral-100: #1E293B;
-  /* ...etc */
+  /* Tokens như mục 2 */
 }
 ```
 
@@ -424,7 +632,7 @@ Sau đó map shadcn/ui CSS variables (`--primary`, `--background`, `--foreground
 
 ---
 
-## 15. File Structure (Components)
+## 17. File Structure (Components)
 
 ```
 frontend/
@@ -447,3 +655,21 @@ frontend/
             ├── quiz/
             └── ...
 ```
+
+---
+
+## 18. Checklist thiết kế cho page mới
+
+Khi tạo page mới, kiểm tra:
+
+- [ ] Xác định chế độ: **Dashboard** (có sidebar) hay **Public** (editorial full-page)
+- [ ] Nếu Public: thêm mesh gradient background + dot pattern + SVG art
+- [ ] Dùng đúng token màu, không hardcode hex
+- [ ] Dùng radius token: card 14px, button/badge 10px, pill full
+- [ ] Dùng `motion` cho entrance stagger animation
+- [ ] Dùng Google/Facebook SVG chính xác (không Phosphor simplified)
+- [ ] OAuth button height `h-13` (52px), `rounded-xl` (16px)
+- [ ] Feature pill: `bg-brand-100 text-brand-700` hoặc `accent-100 accent-700`
+- [ ] Gradient text: `from-brand-500 to-accent-500 bg-clip-text text-transparent`
+- [ ] Body text max-width: `max-w-md` hoặc `max-w-prose`
+- [ ] Tôn trọng `prefers-reduced-motion`
