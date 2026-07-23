@@ -18,3 +18,28 @@ export async function apiPost(path: string, body?: unknown, token?: string) {
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
+
+export async function apiPatch(path: string, body: unknown, token?: string) {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(`/api/v1${path}`, {
+    method: 'PATCH',
+    headers,
+    credentials: 'include',
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function apiDelete(path: string, token?: string) {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(`/api/v1${path}`, {
+    method: 'DELETE',
+    headers,
+    credentials: 'include',
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}

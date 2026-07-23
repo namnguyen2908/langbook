@@ -2,7 +2,6 @@
 
 import { List, SignOut } from '@phosphor-icons/react';
 import { useAuth } from '@/app/_components/providers/auth-provider';
-import { Badge } from '@/app/_components/ui/badge';
 
 interface TopBarProps {
   onMenuToggle: () => void;
@@ -24,8 +23,6 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
       <div className="hidden lg:block" />
 
       <div className="flex items-center gap-2 sm:gap-3">
-        {user?.role === 'admin' && <Badge variant="accent">Admin</Badge>}
-
         <span className="hidden truncate text-sm font-medium text-neutral-700 sm:block">
           {user?.name || user?.email}
         </span>

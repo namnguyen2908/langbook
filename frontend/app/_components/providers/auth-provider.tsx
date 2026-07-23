@@ -17,7 +17,7 @@ interface AuthContextType {
   loading: boolean;
   login: () => void;
   logout: () => Promise<void>;
-  setAuth: (token: string) => Promise<void>;
+  setAuth: (token: string) => Promise<User | void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -47,6 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const u = await apiGet('/auth/me', newToken);
       setUser(u);
+      return u as User;
     } catch {
       setToken(null);
       sessionStorage.removeItem('access_token');

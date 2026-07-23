@@ -12,7 +12,9 @@ function CallbackHandler() {
   useEffect(() => {
     const token = searchParams.get('token');
     if (token) {
-      setAuth(token).then(() => router.replace('/'));
+      setAuth(token).then((user) => {
+        router.replace(user?.role === 'admin' ? '/admin' : '/');
+      });
     } else {
       router.replace('/login');
     }
