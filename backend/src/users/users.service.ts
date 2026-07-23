@@ -18,7 +18,10 @@ export class UsersService {
     return this.usersRepository.findOneBy({ email });
   }
 
-  async findByProvider(provider: string, providerId: string): Promise<User | null> {
+  async findByProvider(
+    provider: string,
+    providerId: string,
+  ): Promise<User | null> {
     return this.usersRepository.findOneBy({
       provider: provider as 'google' | 'facebook',
       providerId,

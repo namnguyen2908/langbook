@@ -390,14 +390,108 @@ Return JSON:
 | Speaking module | Tốn AI (speech recognition), không phải trọng tâm |
 | Writing module | Tốn AI, khó chấm tự động chất lượng cao |
 | RBAC / multi-role | Chỉ cần admin + user |
-| Multi-provider phức tạp | 1 Gemini key trong env, sau mở rộng nếu cần |
+| Multi-provider phức tạp | ~Đã thay bằng API Key Management system~ |
 | Lưu nội dung gốc | Chỉ lưu AI output, tránh bản quyền |
 | Mở rộng ngôn ngữ tùy ý | Chỉ 3 ngôn ngữ cố định |
 | Duyệt nội dung cộng đồng | Phase 3 (nếu có) |
 
 ---
 
-## 11. Rủi ro & Giảm thiểu
+## 11. External Services & API Key Management
+
+### 11.1 Danh sách dịch vụ
+
+| Service | Mục đích | Auth method | Cấu hình cần |
+|---|---|---|---|
+| **Google OAuth** | Đăng nhập user bằng tài khoản Google | OAuth 2.0 | `client_id` + `client_secret` |
+| **Facebook OAuth** | Đăng nhập user bằng tài khoản Facebook | OAuth 2.0 | `app_id` + `app_secret` |
+| **Gemini API** | AI sinh nội dung bài học (passage, vocab, quiz) | API key, header `x-goog-api-key` | 1 key string |
+| **Edge-TTS** | Chuyển text → giọng nói (Listening) | Free, chạy local | Không cần |
+| **Cloudinary** | Lưu trữ audio (TTS) + ảnh | API credentials | `cloud_name` + `api_key` + `api_secret` |
+
+### 11.2 Database — API Key Management
+
+```sql
+CREATE TABLE api_providers (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name        VARCHAR(100) UNIQUE NOT NULL,
+  endpoint    VARCHAR(500) NOT NULL,
+  is_active   BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE api_keys (
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  provider_id     UUID NOT NULL REFERENCES api_providers(id) ON DELETE CASCADE,
+  key_value       TEXT NOT NULL,
+  key_preview     VARCHAR(20) NOT NULL,
+  status          VARCHAR(20) NOT NULL DEFAULT 'active'
+                  CHECK (status IN ('active','rate_limited','invalid','error','disabled')),
+  error_message   TEXT,
+  last_checked_at TIMESTAMPTZ,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+
+**Giải thích `key_value`:**
+- Gemini: lưu 1 key string duy nhất
+- Cloudinary: lưu JSON string `{"cloud_name":"...","api_key":"...","api_secret":"..."}` (parse ở backend)
+
+### 11.3 Seed data mẫu
+
+```sql
+INSERT INTO api_providers (name, endpoint) VALUES
+  ('gemini to content', 'https://generativelanguage.googleapis.com/v1beta/models'),
+  ('gemini to quiz',    'https://generativelanguage.googleapis.com/v1beta/models'),
+  ('cloudinary',        'https://api.cloudinary.com/v1_1');
+```
+
+### 11.4 Cơ chế tự động
+
+```
+AI Generator gọi selectKey('gemini to content')
+  → Lấy 1 key bất kỳ status = 'active'
+  → Gọi Gemini API
+  → Nếu 429 (rate limit):
+      → update status = 'rate_limited', error_message = '429 ...'
+      → lấy key active khác → thử lại
+  → Nếu 403 (invalid key):
+      → update status = 'invalid', error_message = '403 ...'
+      → lấy key active khác → thử lại
+  → Nếu hết key active → trả lỗi "Dịch vụ AI tạm thời gián đoạn"
+```
+
+### 11.5 Admin endpoints
+
+| Method | Path | Mô tả |
+|---|---|---|
+| `GET` | `/admin/api-providers` | List providers |
+| `POST` | `/admin/api-providers` | Tạo provider |
+| `GET` | `/admin/api-keys?provider_id=xxx` | List keys |
+| `POST` | `/admin/api-keys` | Thêm key mới |
+| `PATCH` | `/admin/api-keys/:id` | Sửa status, error_message |
+| `DELETE` | `/admin/api-keys/:id` | Xoá key |
+
+---
+
+## 12. Admin Sidebar Design (Mega Menu)
+
+Khi admin có nhiều mục (>5), sidebar dùng **mega menu** — click vào nhóm để xổ ra danh sách con. Ví dụ:
+
+```
+Dashboard
+Providers ▼
+  ├── Tất cả
+  ├── gemini to content
+  ├── gemini to quiz
+  └── cloudinary
+```
+
+Áp dụng khi số lượng provider > 3. Nếu chỉ 1-2 provider, giữ sidebar 2 tầng đơn giản (Dashboard / Providers).
+
+---
+
+## 13. Rủi ro & Giảm thiểu
 
 | Rủi ro | Giải pháp |
 |---|---|

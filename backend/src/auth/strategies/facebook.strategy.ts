@@ -19,11 +19,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     });
   }
 
-  async validate(
-    _accessToken: string,
-    _refreshToken: string,
-    profile: any,
-  ) {
+  async validate(_accessToken: string, _refreshToken: string, profile: any) {
     const { id, emails, displayName } = profile;
     const user = await this.authService.validateOAuthUser({
       provider: 'facebook',

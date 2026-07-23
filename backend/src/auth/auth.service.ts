@@ -18,7 +18,10 @@ export class AuthService {
     email: string;
     name: string;
   }): Promise<User> {
-    let user = await this.usersService.findByProvider(data.provider, data.providerId);
+    const user = await this.usersService.findByProvider(
+      data.provider,
+      data.providerId,
+    );
     if (user) return user;
 
     const adminEmail = this.configService.get<string>('ADMIN_EMAIL');
@@ -26,7 +29,11 @@ export class AuthService {
 
     const existing = await this.usersService.findByEmail(data.email);
     if (existing) {
-      await this.usersService.updateProvider(existing.id, data.provider, data.providerId);
+      await this.usersService.updateProvider(
+        existing.id,
+        data.provider,
+        data.providerId,
+      );
       if (existing.role !== role) {
         await this.usersService.updateRole(existing.id, role);
       }

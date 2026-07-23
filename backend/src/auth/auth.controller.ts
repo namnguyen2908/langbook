@@ -30,7 +30,9 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleCallback(@Req() req: Request, @Res() res: Response) {
-    const { accessToken, refreshToken } = await this.authService.login(req.user as User);
+    const { accessToken, refreshToken } = await this.authService.login(
+      req.user as User,
+    );
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: true,
@@ -49,7 +51,9 @@ export class AuthController {
   @Get('facebook/callback')
   @UseGuards(AuthGuard('facebook'))
   async facebookCallback(@Req() req: Request, @Res() res: Response) {
-    const { accessToken, refreshToken } = await this.authService.login(req.user as User);
+    const { accessToken, refreshToken } = await this.authService.login(
+      req.user as User,
+    );
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
       secure: true,
